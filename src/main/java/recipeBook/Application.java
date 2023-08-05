@@ -1,6 +1,8 @@
 package recipeBook;
 
+import recipeBook.data.Recipe;
 import recipeBook.database.Database;
+import recipeBook.database.DatabaseActions;
 import recipeBook.initialize.TableInitializer;
 import recipeBook.initialize.TableStatements;
 import recipeBook.logic.RecipeRepository;
@@ -24,10 +26,13 @@ public class Application {
         PrintStatements printStatements = new PrintStatements();
         int chosenAction = printStatements.printInitialMessage();
         RecipeRepository repository = new RecipeRepository();
+        DatabaseActions databaseActions = new DatabaseActions(database);
 
         switch (chosenAction) {
             case 1:
-                repository.addRecipe();
+                Recipe recipe = repository.addRecipe();
+                printStatements.printRecipe(recipe);
+                databaseActions.save(recipe);
                 break;
             case 2:
                 repository.searchRecipe();

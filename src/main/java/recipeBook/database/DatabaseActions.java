@@ -23,8 +23,8 @@ public class DatabaseActions {
             statement.setInt(3, recipe.numberOfIngredients());
             statement.setInt(4, recipe.duration());
             statement.setInt(5, recipe.numberOfServings());
-            statement.setArray(5, connection.createArrayOf("VARCHAR", recipe.tags()));
-            statement.setString(5, recipe.instructions());
+            statement.setArray(6, connection.createArrayOf("VARCHAR", recipe.tags()));
+            statement.setString(7, recipe.instructions());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
