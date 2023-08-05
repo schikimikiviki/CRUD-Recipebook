@@ -4,6 +4,7 @@ import recipeBook.data.Recipe;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class PrintStatements {
@@ -43,5 +44,11 @@ public class PrintStatements {
         System.out.println("----------------------------");
     }
 
+    public void printRecipesList (List<Recipe> matchingRecipes){
+
+        for (Recipe recipe : matchingRecipes){
+            printRecipe(recipe);
+        }
+    }
 
 }

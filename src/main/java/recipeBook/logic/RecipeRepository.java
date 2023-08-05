@@ -42,8 +42,10 @@ public class RecipeRepository {
 
 
 
-    public void searchRecipe() {
-
+    public String searchRecipe() {
+        System.out.println("What recipe are you searching for? You can search for tags, recipe names, ingredients, ... ");
+        String searchTerm = scanner.next();
+        return searchTerm;
     }
 
     public void deleteRecipe() {

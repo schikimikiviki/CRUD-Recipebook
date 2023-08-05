@@ -9,6 +9,7 @@ import recipeBook.logic.RecipeRepository;
 import recipeBook.ui.PrintStatements;
 
 
+import java.util.List;
 import java.util.Map;
 
 public class Application {
@@ -35,7 +36,10 @@ public class Application {
                 databaseActions.save(recipe);
                 break;
             case 2:
-                repository.searchRecipe();
+                String searchTerm = repository.searchRecipe();
+                List<Recipe> matchingRecipes =  databaseActions.findRecipe(searchTerm);
+                printStatements.printRecipesList(matchingRecipes);
+
             case 3:
                 repository.deleteRecipe();
             case 4:
