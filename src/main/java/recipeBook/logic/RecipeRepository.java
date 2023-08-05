@@ -3,8 +3,7 @@ package recipeBook.logic;
 import recipeBook.data.Recipe;
 import recipeBook.ui.PrintStatements;
 
-import java.time.Duration;
-import java.util.Arrays;
+
 import java.util.Scanner;
 
 public class RecipeRepository {
@@ -12,7 +11,7 @@ public class RecipeRepository {
     Scanner scanner = new Scanner(System.in);
     PrintStatements printStatements = new PrintStatements();
 
-    public void addRecipe() {
+    public Recipe addRecipe() {
         System.out.println("Give the recipe a name");
         String recipeName = scanner.nextLine();
 
@@ -38,7 +37,7 @@ public class RecipeRepository {
 
         Recipe recipe = new Recipe(recipeName, ingredientsListArray, numberOfIngredients, duration, numberOfServings, tagListArray, instructions);
 
-        printStatements.printRecipe(recipe);
+        return recipe;
     }
 
 
