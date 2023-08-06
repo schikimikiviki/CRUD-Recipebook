@@ -35,7 +35,7 @@ public class DatabaseActions {
         }
     }
 
-    public List<Recipe> findRecipe(String searchTerm) {
+    public List<Recipe> findRecipe(String searchTerm) throws NoRecipeFoundException {
         String template = "SELECT * FROM recipes WHERE name LIKE ? OR ? = ANY(tags) OR ? = ANY(ingredients)";
 
         List<Recipe> matchingRecipesList = new ArrayList<>();
@@ -67,8 +67,19 @@ public class DatabaseActions {
             throw new RuntimeException(e);
         }
 
+        if (matchingRecipesList.size() == 0){
+            throw new NoRecipeFoundException("No recipe found. Sorry :(");
+        }
+
         return matchingRecipesList;
     }
+
+    public class NoRecipeFoundException extends Exception {
+        public NoRecipeFoundException(String message) {
+            super(message);
+        }
+    }
+
 
 
 

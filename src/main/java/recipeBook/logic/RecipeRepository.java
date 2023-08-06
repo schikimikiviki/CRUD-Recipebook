@@ -18,6 +18,11 @@ public class RecipeRepository {
         System.out.println("What ingredients are used? Type them in separated by commas.");
         String ingredientsList = scanner.nextLine();
         String[] ingredientsListArray = ingredientsList.split(",", 0);
+
+        for (int i = 0; i < ingredientsListArray.length; i++) {
+            ingredientsListArray[i] = " " + ingredientsListArray[i].trim() + " ";
+        }
+
         int numberOfIngredients = ingredientsListArray.length;
 
         System.out.println("How long does this take to make? Type in the number of minutes");
@@ -41,15 +46,17 @@ public class RecipeRepository {
     }
 
 
-
     public String searchRecipe() {
         System.out.println("What recipe are you searching for? You can search for tags, recipe names, ingredients, ... ");
-        String searchTerm = scanner.next();
+        String searchTerm = scanner.nextLine();
+        //todo: make sure this works with "like"
         return searchTerm;
     }
 
-    public void deleteRecipe() {
-
+    public String deleteRecipe() {
+        System.out.println("Which recipe do you want to delete ? Please enter a valid ID");
+        String recipeToDelete = scanner.nextLine();
+        return recipeToDelete;
     }
 
     public void updateRecipe() {

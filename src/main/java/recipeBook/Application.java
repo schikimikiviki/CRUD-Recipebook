@@ -11,6 +11,7 @@ import recipeBook.ui.PrintStatements;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 public class Application {
     public static void main(String[] args) {
@@ -28,23 +29,49 @@ public class Application {
         int chosenAction = printStatements.printInitialMessage();
         RecipeRepository repository = new RecipeRepository();
         DatabaseActions databaseActions = new DatabaseActions(database);
+        Scanner scanner = new Scanner(System.in);
 
-        switch (chosenAction) {
-            case 1:
-                Recipe recipe = repository.addRecipe();
-                printStatements.printRecipe(recipe);
-                databaseActions.save(recipe);
-                break;
-            case 2:
-                String searchTerm = repository.searchRecipe();
-                List<Recipe> matchingRecipes =  databaseActions.findRecipe(searchTerm);
-                printStatements.printRecipesList(matchingRecipes);
+        boolean inputIdentifier = false;
 
-            case 3:
-                repository.deleteRecipe();
-            case 4:
-                repository.updateRecipe();
+        while (true) {
+            while (!inputIdentifier) { // Inner loop to keep asking for input
+                switch (chosenAction) {
+                    case 1:
+                        Recipe recipe = repository.addRecipe();
+                        printStatements.printRecipe(recipe);
+                        databaseActions.save(recipe);
+                        inputIdentifier = true;
+                        break;
+                    case 2:
+                        String searchTerm = repository.searchRecipe();
+
+                        try {
+                            List<Recipe> matchingRecipes = databaseActions.findRecipe(searchTerm);
+                            printStatements.printRecipesList(matchingRecipes);
+                            inputIdentifier = true;
+                        } catch (DatabaseActions.NoRecipeFoundException e) {
+                            System.out.println(e.getMessage());
+                        }
+                        break;
+                    case 3:
+                        repository.deleteRecipe();
+                        inputIdentifier = true;
+                        break;
+                    case 4:
+                        repository.updateRecipe();
+                        inputIdentifier = true;
+                        break;
+
+                    default:
+                        System.out.println("Please enter a valid number.");
+                        chosenAction = scanner.nextInt();
+                        break;
+                }
+            }
+
+
         }
+
 
     }
 }
