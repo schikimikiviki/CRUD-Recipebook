@@ -31,7 +31,9 @@ public class TableInitializer {
             while (resultSet.next()) {
                 String name = resultSet.getString("TABLE_NAME");
                 if (tableName.equalsIgnoreCase(name)) {
+
                     System.out.println("Table detected = " + name);
+                    System.out.println("");
                     return true;
                 }
             }
@@ -46,7 +48,10 @@ public class TableInitializer {
         try (Connection connection = database.getConnection();
              Statement statement = connection.createStatement()) {
             statement.executeUpdate(table.getValue());
+
             System.out.println("Table created = " + table.getKey());
+            System.out.println("");
+
         } catch (SQLException ex) {
             System.err.println("Could not create table: " + table.getKey());
             throw new RuntimeException(ex);

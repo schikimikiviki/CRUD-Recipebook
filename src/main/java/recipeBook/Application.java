@@ -54,11 +54,17 @@ public class Application {
                         }
                         break;
                     case 3:
-                        repository.deleteRecipe();
+                        String recipeNameToDelete = repository.deleteRecipe();
+                        databaseActions.deleteRecipe(recipeNameToDelete);
                         inputIdentifier = true;
                         break;
                     case 4:
                         repository.updateRecipe();
+                        inputIdentifier = true;
+                        break;
+
+                    case 5:
+                        repository.viewAllRecipes();
                         inputIdentifier = true;
                         break;
 

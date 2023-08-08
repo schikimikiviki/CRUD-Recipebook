@@ -28,13 +28,13 @@ public class PrintStatements {
         System.out.println("[2] - Search for recipe");
         System.out.println("[3] - Delete recipe");
         System.out.println("[4] - Update recipe");
+        System.out.println("[5] - See recipe list");
         int chosenPossibility = scanner.nextInt();
         return chosenPossibility;
     }
 
     public void printRecipe(Recipe recipe) {
         System.out.println("----------------------------");
-      // todo: get the ID from the database and print it out
         System.out.println(ANSI_RED + "Recipe: " + ANSI_RESET + recipe.name());
         System.out.println(ANSI_ORANGE + "Ingredients: " + ANSI_RESET + Arrays.toString(recipe.ingredients()));
         System.out.println(ANSI_YELLOW + "Number of Ingredients: " + ANSI_RESET + recipe.numberOfIngredients());
