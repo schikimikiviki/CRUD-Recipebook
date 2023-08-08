@@ -71,25 +71,19 @@ public class DatabaseActions {
         try (Connection connection = database.getConnection();
              PreparedStatement deleteStatement = connection.prepareStatement(deleteTemplate)) {
 
-
             List<Integer> recipeIds = findRecipeIdsByName(recipeName);
 
             if (recipeIds.isEmpty()) {
                 System.out.println("Recipe not found");
-            } else if (recipeIds.size() == 1) {
-                // If there is only one recipe with the given name, delete it directly
+            } else {
+
                 int recipeId = recipeIds.get(0);
                 deleteStatement.setString(1, recipeName);
                 deleteStatement.setInt(2, recipeId);
                 deleteStatement.executeUpdate();
                 System.out.println("Recipe was deleted");
-                return;
-            } else {
-
-                System.out.println("Multiple recipes with the same name found. Delete all? Type [y] or [n]");
-                String answer = scanner.nextLine();
-                //todo: what would make sense here?
             }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -165,6 +159,71 @@ public class DatabaseActions {
     public List<Recipe> getAllRecipes() throws NoRecipeFoundException {
         String template = "SELECT * FROM recipes";
         return executeRecipeQuery(template);
+    }
+
+    public void updateRecipe(String recipeToUpdate) {
+        String selectTemplate = "SELECT * FROM recipes WHERE name = ?";
+        String updateTemplate = "UPDATE recipes SET name = ?, ingredients = ?, number_of_ingredients = ?, duration = ?, servings = ?, tags = ?, instructions = ? WHERE id = ?";
+
+        try (Connection connection = database.getConnection();
+             PreparedStatement selectStatement = connection.prepareStatement(selectTemplate);
+             PreparedStatement updateStatement = connection.prepareStatement(updateTemplate)) {
+
+            selectStatement.setString(1, recipeToUpdate);
+            try (ResultSet resultSet = selectStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    int recipeId = resultSet.getInt("id");
+
+                    System.out.println("Enter updated name:");
+                    String updatedName = scanner.nextLine();
+
+                    System.out.println("Enter updated ingredients separated by commas:");
+                    String updatedIngredients = scanner.nextLine();
+                    String[] updatedIngredientsArray = updatedIngredients.split(",", 0);
+
+                    for (int i = 0; i < updatedIngredientsArray.length; i++) {
+                        updatedIngredientsArray[i] = " " + updatedIngredientsArray[i].trim() + " ";
+                    }
+
+                    System.out.println("Enter the updated duration");
+                    int updatedDuration = scanner.nextInt();
+
+                    System.out.println("Enter the updated number of servings");
+                    int updatedServings = scanner.nextInt();
+
+                    // Consume any remaining newline characters in the buffer
+                    scanner.nextLine();
+
+                    System.out.println("Enter updated tags");
+                    String updatedTagsList = scanner.nextLine();
+                    String[] updatedTagArray = updatedTagsList.split(",", 0);
+
+                    for (int i = 0; i < updatedTagArray.length; i++) {
+                        updatedTagArray[i] = " " + updatedTagArray[i].trim() + " ";
+                    }
+
+                    System.out.println("Enter updated instructions");
+                    String updatedInstructions = scanner.nextLine();
+
+
+                    updateStatement.setString(1, updatedName);
+                    updateStatement.setArray(2, connection.createArrayOf("VARCHAR", updatedIngredientsArray));
+                    updateStatement.setInt(3, updatedIngredientsArray.length);
+                    updateStatement.setInt(4, updatedDuration);
+                    updateStatement.setInt(5, updatedServings);
+                    updateStatement.setArray(6, connection.createArrayOf("VARCHAR", updatedTagArray));
+                    updateStatement.setString(7, updatedInstructions);
+                    updateStatement.setInt(8, recipeId);
+
+                    updateStatement.executeUpdate();
+                    System.out.println("Recipe was updated");
+                } else {
+                    System.out.println("Recipe not found");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

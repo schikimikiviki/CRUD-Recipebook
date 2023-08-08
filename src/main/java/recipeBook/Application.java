@@ -26,14 +26,17 @@ public class Application {
         tableInitializer.initialize();
 
         PrintStatements printStatements = new PrintStatements();
-        int chosenAction = printStatements.printInitialMessage();
+
         RecipeRepository repository = new RecipeRepository();
         DatabaseActions databaseActions = new DatabaseActions(database);
         Scanner scanner = new Scanner(System.in);
 
-        boolean inputIdentifier = false;
 
-        while (true) {
+        while (true) {  // Outer loop for main menu
+            boolean inputIdentifier = false; // Reset flag for each iteration
+            System.out.println("");
+            int chosenAction = printStatements.printInitialMessage();
+
             while (!inputIdentifier) { // Inner loop to keep asking for input
                 switch (chosenAction) {
                     case 1:
@@ -41,6 +44,7 @@ public class Application {
                         printStatements.printRecipe(recipe);
                         databaseActions.save(recipe);
                         inputIdentifier = true;
+
                         break;
                     case 2:
                         String searchTerm = repository.searchRecipe();
@@ -59,7 +63,8 @@ public class Application {
                         inputIdentifier = true;
                         break;
                     case 4:
-                        repository.updateRecipe();
+                        String recipeToUpdate = repository.updateRecipe();
+                        databaseActions.updateRecipe(recipeToUpdate);
                         inputIdentifier = true;
                         break;
 

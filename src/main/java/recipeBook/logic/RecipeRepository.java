@@ -40,6 +40,10 @@ public class RecipeRepository {
         String tagList = scanner.nextLine();
         String[] tagListArray = tagList.split(",", 0);
 
+        for (int i = 0; i < tagListArray.length; i++) {
+            tagListArray[i] = " " + tagListArray[i].trim() + " ";
+        }
+
         System.out.println("What are the instructions?");
         String instructions = scanner.nextLine();
 
@@ -62,7 +66,12 @@ public class RecipeRepository {
         return recipeToDelete;
     }
 
-    public void updateRecipe() {
+    //todo: all input should be case-insensitive
+
+    public String updateRecipe() {
+        System.out.println("Which recipe do you want to update ? Please provide the recipe name");
+        String recipeToUpdate = scanner.nextLine();
+        return recipeToUpdate;
 
     }
 
