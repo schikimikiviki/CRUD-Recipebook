@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Application {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws DatabaseActions.NoRecipeFoundException {
         Database database = new Database(
                 "jdbc:postgresql://localhost:5432/recipe_book",
                 "postgres",
@@ -64,7 +64,8 @@ public class Application {
                         break;
 
                     case 5:
-                        repository.viewAllRecipes();
+                        List<Recipe> allRecipes = databaseActions.getAllRecipes();
+                        printStatements.printRecipesList(allRecipes);
                         inputIdentifier = true;
                         break;
 

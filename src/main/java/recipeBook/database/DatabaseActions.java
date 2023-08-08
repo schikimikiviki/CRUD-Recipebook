@@ -42,7 +42,7 @@ public class DatabaseActions {
                 }
             }
 
-            // Insert the new recipe with the unique name
+
             insertStatement.setString(1, newName);
             insertStatement.setArray(2, connection.createArrayOf("VARCHAR", recipe.ingredients()));
             insertStatement.setInt(3, recipe.numberOfIngredients());
@@ -58,66 +58,6 @@ public class DatabaseActions {
         }
     }
 
-
-
-    public boolean isRecipeNameUnique(String recipeName) {
-        String checkNameTemplate = "SELECT COUNT(*) FROM recipes WHERE name = ?";
-
-        try (Connection connection = database.getConnection();
-             PreparedStatement checkNameStatement = connection.prepareStatement(checkNameTemplate)) {
-
-            checkNameStatement.setString(1, recipeName);
-            try (ResultSet resultSet = checkNameStatement.executeQuery()) {
-                if (resultSet.next() && resultSet.getInt(1) > 0) {
-                    return false; // Name is not unique
-                }
-            }
-
-            return true; // Name is unique
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    public List<Recipe> findRecipe(String searchTerm) throws NoRecipeFoundException {
-        String template = "SELECT * FROM recipes WHERE name LIKE ? OR ? = ANY(tags) OR ? = ANY(ingredients)";
-
-        List<Recipe> matchingRecipesList = new ArrayList<>();
-
-        try (Connection connection = database.getConnection();
-             PreparedStatement statement = connection.prepareStatement(template)) {
-
-            String wildcardSearchTerm = "%" + searchTerm + "%";
-
-            statement.setString(1, wildcardSearchTerm);
-            statement.setString(2, searchTerm);
-            statement.setString(3, searchTerm);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    String recipeName = resultSet.getString("name");
-                    String[] ingredients = resultSet.getString("ingredients").split(",");
-                    int numberOfIngredients = resultSet.getInt("number_of_ingredients");
-                    int duration = resultSet.getInt("duration");
-                    int numberOfServings = resultSet.getInt("servings");
-                    String[] tags = resultSet.getString("tags").split(",");
-                    String instructions = resultSet.getString("instructions");
-
-                    Recipe recipe = new Recipe(recipeName, ingredients, numberOfIngredients, duration, numberOfServings, tags, instructions);
-                    matchingRecipesList.add(recipe);
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        if (matchingRecipesList.size() == 0){
-            throw new NoRecipeFoundException("No recipe found. Sorry :(");
-        }
-
-        return matchingRecipesList;
-    }
 
     public class NoRecipeFoundException extends Exception {
         public NoRecipeFoundException(String message) {
@@ -148,7 +88,7 @@ public class DatabaseActions {
 
                 System.out.println("Multiple recipes with the same name found. Delete all? Type [y] or [n]");
                 String answer = scanner.nextLine();
-               //todo: what would make sense here?
+                //todo: what would make sense here?
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -178,8 +118,54 @@ public class DatabaseActions {
         return recipeIds;
     }
 
+    public List<Recipe> executeRecipeQuery(String queryTemplate, Object... params) throws NoRecipeFoundException {
+        List<Recipe> recipes = new ArrayList<>();
+
+        try (Connection connection = database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(queryTemplate)) {
+
+            for (int i = 0; i < params.length; i++) {
+                statement.setObject(i + 1, params[i]);
+            }
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    String recipeName = resultSet.getString("name");
+                    String[] ingredients = resultSet.getString("ingredients").split(",");
+                    int numberOfIngredients = resultSet.getInt("number_of_ingredients");
+                    int duration = resultSet.getInt("duration");
+                    int numberOfServings = resultSet.getInt("servings");
+                    String[] tags = resultSet.getString("tags").split(",");
+                    String instructions = resultSet.getString("instructions");
+
+                    Recipe recipe = new Recipe(recipeName, ingredients, numberOfIngredients, duration, numberOfServings, tags, instructions);
+                    recipes.add(recipe);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (recipes.isEmpty()) {
+            throw new NoRecipeFoundException("No recipes found.");
+        }
+
+        return recipes;
+    }
 
 
+
+    public List<Recipe> findRecipe(String searchTerm) throws NoRecipeFoundException {
+        String template = "SELECT * FROM recipes WHERE name LIKE ? OR ? = ANY(tags) OR ? = ANY(ingredients)";
+        String wildcardSearchTerm = "%" + searchTerm + "%";
+
+        return executeRecipeQuery(template, wildcardSearchTerm, searchTerm, searchTerm);
+    }
+
+    public List<Recipe> getAllRecipes() throws NoRecipeFoundException {
+        String template = "SELECT * FROM recipes";
+        return executeRecipeQuery(template);
+    }
 
 
 }

@@ -1,8 +1,7 @@
 package recipeBook.logic;
 
 import recipeBook.data.Recipe;
-import recipeBook.database.Database;
-import recipeBook.database.DatabaseActions;
+
 import recipeBook.ui.PrintStatements;
 
 import java.util.ArrayList;
@@ -54,7 +53,6 @@ public class RecipeRepository {
     public String searchRecipe() {
         System.out.println("What recipe are you searching for? You can search for tags, recipe names, ingredients, ... ");
         String searchTerm = scanner.nextLine();
-        //todo: make sure this works with "like"
         return searchTerm;
     }
 
@@ -68,10 +66,5 @@ public class RecipeRepository {
 
     }
 
-    public List<Recipe> viewAllRecipes(){
 
-        List<Recipe> allRecipes = new ArrayList<>();
-
-        return allRecipes;
-    }
 }
